@@ -1,0 +1,5 @@
+name: advent-of-code-2023
+include:
+  src
+depend:
+  standard-library
