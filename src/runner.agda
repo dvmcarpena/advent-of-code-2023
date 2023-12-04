@@ -1,4 +1,4 @@
-{-# OPTIONS --without-K --guardedness #-}
+{-# OPTIONS --with-K --guardedness #-}
 
 module runner where
 
