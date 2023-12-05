@@ -67,6 +67,9 @@ Exp-concatenate (e1 List⁺.∷ es) with es
 Exp-from-String : String → Maybe Exp
 Exp-from-String = Maybe.map Exp-concatenate ∘ List⁺.fromList ∘ List.map Regex.singleton ∘ String.toList
 
+Exp-from-String' : (s : String) → Maybe.From-just (Exp-from-String s)
+Exp-from-String' = Maybe.from-just ∘ Exp-from-String
+
 Exp-from-Strings : List String → Maybe Exp
 Exp-from-Strings [] = nothing
 Exp-from-Strings (s1 ∷ ss) with ss

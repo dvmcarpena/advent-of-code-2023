@@ -95,11 +95,11 @@ map-exp-digits : (s : List Char) → (s ∈ digits) → ℕ
 map-exp-digits = h
 
 map-exp-all-digits : (s : List Char) → (s ∈ (digits Regex.∣ written-digits)) → ℕ
-map-exp-all-digits s (Regex.sum (inj₁ p)) = h s p
+map-exp-all-digits s (Regex.sum (inj₁ p)) = map-exp-digits s p
 map-exp-all-digits s (∈-sum (inj₂ p)) = h s p
 
 map-exp-all-digits-reversed : (s : List Char) → (s ∈ (digits Regex.∣ Exp-reverse written-digits)) → ℕ
-map-exp-all-digits-reversed s (∈-sum (inj₁ p)) = h s p
+map-exp-all-digits-reversed s (∈-sum (inj₁ p)) = map-exp-digits s p
 map-exp-all-digits-reversed s (∈-sum (inj₂ p)) = h s p
 
 regex-digits : Regex
