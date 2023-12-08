@@ -9,7 +9,7 @@ open import IO
 
 open import runner-utils using (check-expected; day-runner)
 open import day01 renaming (enriched-runner to day01)
--- open import day02 renaming (enriched-runner to day02)
+open import day02 renaming (enriched-runner to day02)
 -- open import day03 renaming (enriched-runner to day03)
 -- open import day04 renaming (enriched-runner to day04)
 -- open import day05 renaming (enriched-runner to day05)
@@ -39,7 +39,7 @@ open import day01 renaming (enriched-runner to day01)
 main : Main
 main = run $ do
    day-runner day01
-   -- day-runner day02
+   day-runner day02
    -- day-runner day03
    -- day-runner day04
    -- day-runner day05
