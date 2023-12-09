@@ -1,48 +1,40 @@
 {-# OPTIONS --with-K --safe #-}
 
-module day02 where
+module Day02 where
 
 -- Imports
 
 open import Function.Base using (_$_; _∘_; id)
 open import Data.Product using (_×_; _,_; <_,_>)
-open import Data.Sum as Sum using (_⊎_)
+open import Data.Sum as Sum using (_⊎_; inj₁; inj₂)
+open import Relation.Nullary using (Dec; yes; no)
+open import Relation.Nullary.Decidable using (True; False; from-yes)
+open import Relation.Binary using (DecPoset)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
-open import Data.Bool.Base using (Bool)
-open import Data.Sum.Base using (inj₁; inj₂)
+open import Data.Bool.Base using (Bool; if_then_else_; true; false; _∧_; _∨_; not)
+open import Data.Maybe as Maybe using (Maybe; nothing; just)
 open import Data.Char.Base as Char using (Char)
-open import Data.Nat.Base as ℕ using (ℕ; zero; suc; _+_; _*_; _∸_; _≤ᵇ_)
-open import Data.Nat.Properties as ℕₚ
-open import Data.String as String using (String; _++_)
+import Data.Char.Properties as Charₚ
 open import Data.List as List using (List; _∷_; [])
 open import Data.List.NonEmpty as List⁺ using (List⁺; _∷⁺_) renaming ([_] to [_]⁺)
+open import Data.Nat.Base as ℕ using (ℕ; zero; suc; _+_; _*_; _∸_; _≤ᵇ_)
+open import Data.Nat.Properties as ℕₚ
 open import Data.List.Extrema ℕₚ.≤-totalOrder renaming (max to Listℕ-max)
+open import Data.String as String using (String; _++_)
 open import Relation.Binary.Properties.DecTotalOrder ℕₚ.≤-decTotalOrder renaming (≥-decTotalOrder to ℕ-≥-decTotalOrder)
 open import Data.List.Sort.MergeSort ℕ-≥-decTotalOrder renaming (sort to Listℕ-sort-decreasing)
-open import Data.Vec.Base as Vec using (Vec; _∷_; [])
-open import Data.Maybe.Base as Maybe using (Maybe; nothing; just)
-open import Data.Bool.Base using (if_then_else_; true; false; _∧_; _∨_; not)
 open import Data.Nat.Show renaming (readMaybe to ℕ-readMaybe; show to ℕ-show)
 open import Data.List.Relation.Unary.All
 open import Data.Product as Product using (∃-syntax; _,′_; proj₁; proj₂)
-open import Relation.Nullary using (Dec; yes; no)
-open import Relation.Binary using (Rel; Decidable)
-open import Relation.Nullary.Decidable using (True; False; from-yes)
-import Data.Char.Properties as Charₚ
-open import Relation.Binary using (DecPoset)
-open import Data.List.Relation.Binary.Infix.Heterogeneous
-open import Text.Regex.Base (DecPoset.preorder Charₚ.≤-decPoset) as Regex using ()
+import Text.Regex.Base (DecPoset.preorder Charₚ.≤-decPoset) as R
 open import Text.Regex Charₚ.≤-decPoset
 
-open import utils using (Runner; mkRunner; List⁺-propagate-maybe; Maybe-idempotent; duplicate; Exp-reverse; Exp-from-String')
+open import utils as Utils using (Runner; mkRunner)
+open Utils.Expression using (Exp-ℕ; Exp-from-String')
+open Utils.Parser using (parse-ℕ; generic-parser-by-lines)
+open import utils-with-k using (parse-6-cases; Exp-star-elimination)
 
 -- Data
-
-Output : Set
-Output = ℕ
-
-Output-show : Output → String
-Output-show = ℕ-show
 
 example-input : String
 example-input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\nGame 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue\nGame 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red\nGame 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\nGame 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
@@ -62,9 +54,6 @@ example-output2 = 2286
 
 -- Parse
 
-Exp-ℕ : Exp
-Exp-ℕ = [ '1' ─ '9' ∷ [] ] ∙ [ '0' ─ '9' ∷ [] ] ⋆
-
 Exp-red : Exp
 Exp-red = Exp-from-String' " red"
 
@@ -79,7 +68,7 @@ Exp-sep = Exp-from-String' ", "
 
 valid-1-set : Exp
 valid-1-set = (Exp-ℕ ∙ Exp-red) ∣ (Exp-ℕ ∙ Exp-green) ∣ (Exp-ℕ ∙ Exp-blue)
-
+  
 valid-2-set : Exp
 valid-2-set = (Exp-ℕ ∙ Exp-red ∙ Exp-sep ∙ Exp-ℕ ∙ Exp-green)
             ∣ (Exp-ℕ ∙ Exp-red ∙ Exp-sep ∙ Exp-ℕ ∙ Exp-blue)
@@ -103,46 +92,21 @@ valid-sets : Exp
 valid-sets = ((valid-set ∙ (Exp-from-String' "; ")) ⋆) ∙ valid-set
 
 valid-line : Exp
-valid-line = (Exp-from-String' "Game ") 
-           ∙ Exp-ℕ 
-           ∙ (Exp-from-String' ": ") 
-           ∙ valid-sets
+valid-line = (Exp-from-String' "Game ") ∙ Exp-ℕ ∙ (Exp-from-String' ": ") ∙ valid-sets
 
 _ : True ((String.toList "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green") ∈? valid-line)
 _ = _
 
-parse-nat : ∀ {s} → (s ∈ Exp-ℕ) → ℕ
-parse-nat {s} _ = convert $ List.map (λ c → (Char.toℕ c) ∸ (Char.toℕ '0')) s
-  where
-    convert : List ℕ → ℕ
-    convert = List.foldl (λ acc d → 10 * acc + d) 0
-
 parse-1-set : ∀ {s} → (s ∈ valid-1-set) → ℕ × ℕ × ℕ
-parse-1-set (sum (inj₁ (prod _ n _))) = (parse-nat n , 0 , 0)
-parse-1-set (sum (inj₂ (sum (inj₁ (prod _ n _))))) = (0 , parse-nat n , 0)
-parse-1-set (sum (inj₂ (sum (inj₂ (prod _ n _))))) = (0 , 0 , parse-nat n)
+parse-1-set (sum (inj₁ (prod _ n _))) = (parse-ℕ n , 0 , 0)
+parse-1-set (sum (inj₂ (sum (inj₁ (prod _ n _))))) = (0 , parse-ℕ n , 0)
+parse-1-set (sum (inj₂ (sum (inj₂ (prod _ n _))))) = (0 , 0 , parse-ℕ n)
 
-parse-nat-2-set : ∀ {s e1 e2} → (s ∈ (Exp-ℕ Regex.∙ e1 Regex.∙ Exp-sep Regex.∙ Exp-ℕ Regex.∙ e2)) → ℕ × ℕ
-parse-nat-2-set (prod _ n1 (prod _ _ (prod _ _ (prod _ n2 _)))) = Product.map parse-nat parse-nat (n1 , n2)
+parse-nat-2-set : ∀ {s e1 e2} → (s ∈ (Exp-ℕ R.∙ e1 R.∙ Exp-sep R.∙ Exp-ℕ R.∙ e2)) → ℕ × ℕ
+parse-nat-2-set (prod _ n1 (prod _ _ (prod _ _ (prod _ n2 _)))) = Product.map parse-ℕ parse-ℕ (n1 , n2)
 
-parse-nat-3-set : ∀ {s e1 e2 e3} → (s ∈ (Exp-ℕ Regex.∙ e1 Regex.∙ Exp-sep Regex.∙ Exp-ℕ Regex.∙ e2 Regex.∙ Exp-sep Regex.∙ Exp-ℕ Regex.∙ e3)) → ℕ × ℕ × ℕ
-parse-nat-3-set (prod _ n1 (prod _ _ (prod _ _ (prod _ n2 (prod _ _ (prod _ _ (prod _ n3 _))))))) = (parse-nat n1 , parse-nat n2 , parse-nat n3)
-
-parse-6-cases : ∀ {s e1 e2 e3 e4 e5 e6} 
-  → {A : Set}
-  → ((x : (s ∈ e1) ⊎ (s ∈ e2) ⊎ (s ∈ e3) ⊎ (s ∈ e4) ⊎ (s ∈ e5) ⊎ (s ∈ e6)) → A)
-  → (s ∈ (e1 Regex.∣ e2 Regex.∣ e3 Regex.∣ e4 Regex.∣ e5 Regex.∣ e6))
-  → A
-parse-6-cases f (sum (inj₁ x)) = f (inj₁ x)
-parse-6-cases f (sum (inj₂ (sum (inj₁ x)))) = f (inj₂ (inj₁ x))
-parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))) = f (inj₂ (inj₂ (inj₁ x)))
-parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))))) = f (inj₂ (inj₂ (inj₂ (inj₁ x))))
-parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))))))) = f (inj₂ (inj₂ (inj₂ (inj₂ (inj₁ x)))))
-parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ x)))))))))) = f (inj₂ (inj₂ (inj₂ (inj₂ (inj₂ x)))))
-
-Exp-star-elimination : ∀ {s e} → {A : Set} → (∀ {t} → (t ∈ e) → A) → (s ∈ (e Regex.⋆)) → List (A)
-Exp-star-elimination f (star (sum (inj₁ _))) = []
-Exp-star-elimination f (star (sum (inj₂ (prod _ p1 r)))) = (f p1) ∷ (Exp-star-elimination f r)
+parse-nat-3-set : ∀ {s e1 e2 e3} → (s ∈ (Exp-ℕ R.∙ e1 R.∙ Exp-sep R.∙ Exp-ℕ R.∙ e2 R.∙ Exp-sep R.∙ Exp-ℕ R.∙ e3)) → ℕ × ℕ × ℕ
+parse-nat-3-set (prod _ n1 (prod _ _ (prod _ _ (prod _ n2 (prod _ _ (prod _ _ (prod _ n3 _))))))) = (parse-ℕ n1 , parse-ℕ n2 , parse-ℕ n3)
 
 parse-2-set : ∀ {s} → (s ∈ valid-2-set) → ℕ × ℕ × ℕ
 parse-2-set = parse-6-cases Sum.[ f1 , Sum.[ f2 , Sum.[ f3 , Sum.[ f4 , Sum.[ f5 , f6 ] ] ] ] ]
@@ -175,40 +139,18 @@ parse-sets (prod _ st s1) = (Exp-star-elimination f st) List⁺.++⁺ List⁺.[ 
     f : ∀ {s} → (s ∈ (valid-set ∙ (Exp-from-String' "; "))) → ℕ × ℕ × ℕ
     f (prod _ s _) = parse-set s
 
-
-
 parse-line : ∀ {s} → (s ∈ valid-line) → ℕ × (List⁺ (ℕ × ℕ × ℕ))
-parse-line (prod _ _ (prod {n} {_} {_} _ n-is-nat (prod _ _ sets))) = (parse-nat n-is-nat , parse-sets sets)
-
-regex : Regex
-regex = record
-  { fromStart  = true
-  ; tillEnd    = true
-  ; expression = valid-line
-  }
-
-generic-parser-by-lines : (Parsed : Set)
-  → (r : Regex) 
-  → (∀ {s} → (s ∈ (Regex.expression r)) → Parsed) 
-  → String
-  → Maybe (List⁺ Parsed)
-generic-parser-by-lines Parsed r to-Parsed = Maybe-idempotent ∘ Maybe.map generic-parse-lines ∘ List⁺.fromList ∘ String.lines
-  where
-    generic-parse-line : List Char → Maybe (Parsed)
-    generic-parse-line s = Maybe.map (to-Parsed ∘ Match.match) $ Maybe.decToMaybe $ search s r
-
-    generic-parse-lines : List⁺ String → Maybe (List⁺ (Parsed))
-    generic-parse-lines = List⁺-propagate-maybe ∘ List⁺.map (generic-parse-line ∘ String.toList)
+parse-line (prod _ _ (prod _ n-is-nat (prod _ _ sets))) = (parse-ℕ n-is-nat , parse-sets sets)
 
 parse-input : String → Maybe (List⁺ (ℕ × (List⁺ (ℕ × ℕ × ℕ))))
-parse-input = generic-parser-by-lines (ℕ × (List⁺ (ℕ × ℕ × ℕ))) regex parse-line
+parse-input = generic-parser-by-lines valid-line parse-line
 
 _ : parse-input example-input ≡ just example-parsed
 _ = refl
 
 -- Solvers
 
-solve1 : String → Maybe Output
+solve1 : String → Maybe ℕ
 solve1 = Maybe.map (solve)  ∘ parse-input
   where
     solve : List⁺ (ℕ × (List⁺ (ℕ × ℕ × ℕ))) → ℕ
@@ -220,7 +162,7 @@ solve1 = Maybe.map (solve)  ∘ parse-input
         f : ℕ × (List⁺ (ℕ × ℕ × ℕ)) → Bool
         f (_ , xs) = List.all gg (List⁺.toList xs)
 
-solve2 : String → Maybe Output
+solve2 : String → Maybe ℕ
 solve2 = Maybe.map (solve)  ∘ parse-input
   where
     max : List (ℕ × ℕ × ℕ) → ℕ × ℕ × ℕ
@@ -245,4 +187,4 @@ _ = refl
 -- Runner
 
 runner : Runner
-runner = mkRunner solve1 solve2 Output-show "day02" "Day 02"
+runner = mkRunner solve1 solve2 ℕ-show "day02" "Day 02"

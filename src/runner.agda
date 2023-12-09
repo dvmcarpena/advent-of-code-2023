@@ -8,59 +8,59 @@ open import Function.Base using (_$_)
 open import IO
 
 open import runner-utils using (check-expected; day-runner)
-import day01
-import day02
--- import day03
--- import day04
--- import day05
--- import day06
--- import day07
--- import day08
--- import day09
--- import day10
--- import day11
--- import day12
--- import day13
--- import day14
--- import day15
--- import day16
--- import day17
--- import day18
--- import day19
--- import day19
--- import day20
--- import day21
--- import day22
--- import day23
--- import day24
--- import day25
+import Day01
+import Day02
+-- import Day03
+-- import Day04
+-- import Day05
+-- import Day06
+-- import Day07
+-- import Day08
+-- import Day09
+-- import Day10
+-- import Day11
+-- import Day12
+-- import Day13
+-- import Day14
+-- import Day15
+-- import Day16
+-- import Day17
+-- import Day18
+-- import Day19
+-- import Day19
+-- import Day20
+-- import Day21
+-- import Day22
+-- import Day23
+-- import Day24
+-- import Day25
 
 -- Main
 
 main : Main
 main = run $ do
-   day-runner day01.runner
-   day-runner day02.runner
-   -- day-runner day03.runner
-   -- day-runner day04.runner
-   -- day-runner day05.runner
-  --  day-runner day06.runner
-  --  day-runner day07.runner
-  --  day-runner day08.runner
-  --  day-runner day09.runner
-  --  day-runner day10.runner
-  --  day-runner day11.runner
-  --  day-runner day12.runner
-  --  day-runner day13.runner
-  --  day-runner day14.runner
-  --  day-runner day15.runner
-  --  day-runner day16.runner
-  --  day-runner day17.runner
-  --  day-runner day18.runner
-  --  day-runner day19.runner
-  --  day-runner day20.runner
-  --  day-runner day21.runner
-  --  day-runner day22.runner
-  --  day-runner day23.runner
-  --  day-runner day24.runner
-  --  day-runner day25.runner
+   day-runner Day01.runner
+   day-runner Day02.runner
+   -- day-runner Day03.runner
+   -- day-runner Day04.runner
+   -- day-runner Day05.runner
+  --  day-runner Day06.runner
+  --  day-runner Day07.runner
+  --  day-runner Day08.runner
+  --  day-runner Day09.runner
+  --  day-runner Day10.runner
+  --  day-runner Day11.runner
+  --  day-runner Day12.runner
+  --  day-runner Day13.runner
+  --  day-runner Day14.runner
+  --  day-runner Day15.runner
+  --  day-runner Day16.runner
+  --  day-runner Day17.runner
+  --  day-runner Day18.runner
+  --  day-runner Day19.runner
+  --  day-runner Day20.runner
+  --  day-runner Day21.runner
+  --  day-runner Day22.runner
+  --  day-runner Day23.runner
+  --  day-runner Day24.runner
+  --  day-runner Day25.runner
