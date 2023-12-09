@@ -32,7 +32,7 @@ open import Data.List.Relation.Binary.Infix.Heterogeneous
 open import Text.Regex.Base (DecPoset.preorder Charₚ.≤-decPoset) as Regex using ()
 open import Text.Regex Charₚ.≤-decPoset renaming (sum to ∈-sum)
 
-open import utils using (EnrichedRunner; List⁺-propagate-maybe; Maybe-idempotent; duplicate; Exp-reverse; Exp-from-Strings')
+open import utils using (Runner; mkRunner; List⁺-propagate-maybe; Maybe-idempotent; duplicate; Exp-reverse; Exp-from-Strings')
 
 -- Data
 
@@ -200,15 +200,5 @@ _ = refl
 
 -- Runner
 
-runner : String → String
-runner = format-results ∘ < solve1 , solve2 >
-  where
-    format-result : (Maybe Output) → String
-    format-result nothing = "Invalid input format!"
-    format-result (just out) = Output-show out
-    
-    format-results : (Maybe Output) × (Maybe Output) → String
-    format-results (out₁ , out₂) = "Part One: " ++ format-result out₁ ++ "\nPart Two: " ++ format-result out₂
-
-enriched-runner : EnrichedRunner
-enriched-runner = runner , "day01" , "Day 01" , true
+runner : Runner
+runner = mkRunner solve1 solve2 Output-show "day01" "Day 01"

@@ -9,9 +9,9 @@ open import Function.Base using (_∘_; id)
 open import Relation.Binary using (DecPoset)
 open import Data.Nat.Base using (ℕ)
 open import Data.Char.Properties as Charₚ using ()
-open import Data.String.Base as String using (String)
+open import Data.String.Base as String using (String; _++_)
 open import Data.Bool.Base using (Bool)
-open import Data.Product using (_×_; _,_)
+open import Data.Product using (_×_; _,_; <_,_>)
 open import Data.List.Base as List using (List; _∷_; [])
 open import Data.List.NonEmpty as List⁺ using (List⁺; _∷⁺_)
 open import Data.Vec.Base using (Vec; _∷_; [])
@@ -25,10 +25,25 @@ private
     ℓ₁ : Level
     A : Set ℓ₁
 
--- Data
+-- Runner
 
-EnrichedRunner : Set
-EnrichedRunner = (String → String) × String × String × Bool
+Runner : Set
+Runner = (String → String) × String × String
+
+mkRunner : (String → Maybe A) 
+         → (String → Maybe A) 
+         → (A → String) 
+         → String 
+         → String 
+         → Runner
+mkRunner {ℓ₁} {A} solve1 solve2 A-show file display = (format-results ∘ < solve1 , solve2 > , file , display)
+  where
+    format-result : (Maybe A) → String
+    format-result nothing = "Invalid input format!"
+    format-result (just a) = A-show a
+    
+    format-results : (Maybe A) × (Maybe A) → String
+    format-results (a₁ , a₂) = "Part One: " ++ format-result a₁ ++ "\nPart Two: " ++ format-result a₂
 
 -- Utils
 
