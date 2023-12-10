@@ -28,8 +28,9 @@ open import Text.Regex Charₚ.≤-decPoset
 
 private
   variable
-    ℓ₁ : Level
+    ℓ₁ ℓ₂ : Level
     A : Set ℓ₁
+    B : Set ℓ₂
 
 -- Runner
 
@@ -68,6 +69,10 @@ module Utils where
       rec-enumerate : ℕ → List A → List (ℕ × A)
       rec-enumerate _ [] = []
       rec-enumerate n (a ∷ as) = (n , a) ∷ (rec-enumerate (n + 1) as)
+    
+  Prod-List-concat : List ((List A) × (List B)) → (List A) × (List B)
+  Prod-List-concat [] = [] , []
+  Prod-List-concat ((a , b) ∷ ps) = (λ (as , bs) → (a List.++ as) , (b List.++ bs)) $ Prod-List-concat ps
 
   List-propagate-maybe : List (Maybe A) → Maybe (List A)
   List-propagate-maybe = List.TraversableA.mapA Maybe.applicative id

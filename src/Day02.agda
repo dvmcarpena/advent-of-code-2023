@@ -32,7 +32,7 @@ open import Text.Regex Charₚ.≤-decPoset
 open import utils as Utils using (Runner; mkRunner)
 open Utils.Expression using (Exp-ℕ; Exp-from-String')
 open Utils.Parser using (parse-ℕ; generic-parser-by-lines)
-open import utils-with-k using (parse-6-cases; Exp-star-elimination)
+open import utils-with-k using (parse-6-cases; Exp-star-map)
 
 -- Data
 
@@ -134,7 +134,7 @@ parse-set (sum (inj₂ (sum (inj₁ x)))) = parse-2-set x
 parse-set (sum (inj₂ (sum (inj₂ x)))) = parse-3-set x
 
 parse-sets : ∀ {s} → (s ∈ valid-sets) → List⁺ (ℕ × ℕ × ℕ)
-parse-sets (prod _ st s1) = (Exp-star-elimination f st) List⁺.++⁺ List⁺.[ (parse-set s1) ]
+parse-sets (prod _ st s1) = (Exp-star-map f st) List⁺.++⁺ List⁺.[ (parse-set s1) ]
   where
     f : ∀ {s} → (s ∈ (valid-set ∙ (Exp-from-String' "; "))) → ℕ × ℕ × ℕ
     f (prod _ s _) = parse-set s

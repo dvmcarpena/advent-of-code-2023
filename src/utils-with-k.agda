@@ -13,7 +13,7 @@ open import Data.Char.Base as Char using (Char)
 open import Data.Char.Properties as Charₚ using ()
 open import Data.String as String using (String; _++_)
 open import Data.Bool.Base using (Bool)
-open import Data.Product using (_×_; _,_; <_,_>)
+open import Data.Product using (_×_; _,_; <_,_>; proj₁; proj₂)
 open import Data.Maybe.Base as Maybe using (Maybe; nothing; just)
 import Data.Maybe.Categorical as Maybe
 open import Data.List.Base as List using (List; _∷_; [])
@@ -28,8 +28,9 @@ open import Text.Regex Charₚ.≤-decPoset
 
 private
   variable
-    ℓ₁ : Level
+    ℓ₁ ℓ₂ : Level
     A : Set ℓ₁
+    B : Set ℓ₂
 
 -- Utils
 
@@ -44,6 +45,12 @@ parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))))) = 
 parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))))))) = f (inj₂ (inj₂ (inj₂ (inj₂ (inj₁ x)))))
 parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ x)))))))))) = f (inj₂ (inj₂ (inj₂ (inj₂ (inj₂ x)))))
 
-Exp-star-elimination : ∀ {s e} → {A : Set} → (∀ {t} → (t ∈ e) → A) → (s ∈ (e Regex.⋆)) → List (A)
-Exp-star-elimination f (star (sum (inj₁ _))) = []
-Exp-star-elimination f (star (sum (inj₂ (prod _ p1 r)))) = (f p1) ∷ (Exp-star-elimination f r)
+Exp-star-map : ∀ {s e} → (∀ {t} → (t ∈ e) → A) → (s ∈ (e Regex.⋆)) → List (A)
+Exp-star-map f (star (sum (inj₁ _))) = []
+Exp-star-map f (star (sum (inj₂ (prod _ p1 r)))) = (f p1) ∷ (Exp-star-map f r)
+
+Exp-star-fold : ∀ {s e} → (∀ {t} → B → (t ∈ e) → B × A) → B → (s ∈ (e Regex.⋆)) → List (A)
+Exp-star-fold f b (star (sum (inj₁ _))) = []
+Exp-star-fold f b (star (sum (inj₂ (prod _ p1 r)))) = (proj₂ f1) ∷ (Exp-star-fold f (proj₁ f1) r)
+  where
+    f1 = f b p1
