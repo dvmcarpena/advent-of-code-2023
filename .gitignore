@@ -1,7 +1,7 @@
 # Agda
 *.agdai
 src/MAlonzo/**
-runner
+src/Main
 
 # Direnv
 .direnv
