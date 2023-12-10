@@ -16,7 +16,7 @@ open import Utils using (Runner)
 
 check-expected : String → String → IO (String × String)
 check-expected day result = do
-  expected ← readFiniteFile ("./input/" ++ day ++ "-result.txt")
+  expected ← readFiniteFile ("./output/" ++ day ++ "-output.txt")
   return $ 
     if result == expected 
     then ("✅" , result) 
