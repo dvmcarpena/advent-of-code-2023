@@ -1,6 +1,6 @@
 {-# OPTIONS --with-K --safe #-}
 
-module Day03 where
+module Day03-Regex where
 
 -- Imports
 
@@ -19,10 +19,10 @@ open import Data.String as String using (String)
 import Data.Char.Properties as Charₚ
 open import Text.Regex Charₚ.≤-decPoset using (Exp; _∈?_; _∈_; singleton; _⋆; _∙_; _∣_; prod; sum)
 
-open import utils as Utils using (Runner; mkRunner; module Utils)
+open import Utils using (Runner; mkRunner; module Utils)
 open Utils.Expression using (Exp-ℕ; Exp-from-Strings')
 open Utils.Parser using (parse-ℕ; generic-parser-by-lines)
-open import utils-with-k using (Exp-star-fold)
+open import Utils.WithK using (Exp-star-fold)
 
 -- Data
 

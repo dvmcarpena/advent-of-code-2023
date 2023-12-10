@@ -32,7 +32,7 @@ open import Data.List.Relation.Binary.Infix.Heterogeneous
 open import Text.Regex.Base (DecPoset.preorder Charₚ.≤-decPoset) as Regex using ()
 open import Text.Regex Charₚ.≤-decPoset renaming (sum to ∈-sum)
 
-open import utils as Utils using (Runner; mkRunner)
+open import Utils using (Runner; mkRunner)
 open Utils.Expression using (Exp-reverse; Exp-from-Strings')
 open Utils.Utils using (List⁺-propagate-maybe; Maybe-idempotent; duplicate)
 

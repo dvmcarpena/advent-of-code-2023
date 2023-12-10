@@ -1,6 +1,6 @@
 {-# OPTIONS --with-K --safe #-}
 
-module utils-with-k where
+module Utils.WithK where
 
 -- Imports
 

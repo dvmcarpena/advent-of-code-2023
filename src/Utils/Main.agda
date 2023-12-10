@@ -1,6 +1,6 @@
 {-# OPTIONS --cubical-compatible --guardedness #-}
 
-module runner-utils where
+module Utils.Main where
 
 -- Imports
 
@@ -10,7 +10,7 @@ open import Data.String using (String; _++_; _==_)
 open import Data.Bool using (Bool; true; false; if_then_else_)
 open import IO
 
-open import utils using (Runner)
+open import Utils using (Runner)
 
 -- Utils
 

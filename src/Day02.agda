@@ -29,10 +29,10 @@ open import Data.Product as Product using (∃-syntax; _,′_; proj₁; proj₂)
 import Text.Regex.Base (DecPoset.preorder Charₚ.≤-decPoset) as R
 open import Text.Regex Charₚ.≤-decPoset
 
-open import utils as Utils using (Runner; mkRunner)
+open import Utils using (Runner; mkRunner)
 open Utils.Expression using (Exp-ℕ; Exp-from-String')
 open Utils.Parser using (parse-ℕ; generic-parser-by-lines)
-open import utils-with-k using (parse-6-cases; Exp-star-map)
+open import Utils.WithK using (parse-6-cases; Exp-star-map)
 
 -- Data
 

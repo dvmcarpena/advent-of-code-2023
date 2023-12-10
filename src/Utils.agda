@@ -1,6 +1,6 @@
 {-# OPTIONS --cubical-compatible --safe #-}
 
-module utils where
+module Utils where
 
 -- Imports
 

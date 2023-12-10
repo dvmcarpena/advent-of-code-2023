@@ -1,13 +1,13 @@
 {-# OPTIONS --with-K --guardedness #-}
 
-module runner where
+module Main where
 
 -- Imports
 
 open import Function.Base using (_$_)
 open import IO
 
-open import runner-utils using (check-expected; day-runner)
+open import Utils.Main using (check-expected; day-runner)
 import Day01
 import Day02
 import Day03

@@ -19,7 +19,7 @@ open import Data.Nat as ℕ using (ℕ; _+_; _≤ᵇ_; _*_)
 open import Data.Nat.Show renaming (readMaybe to ℕ-readMaybe; show to ℕ-show)
 open import Data.String as String using (String)
 
-open import utils as Utils using (Runner; mkRunner; module Utils)
+open import Utils using (Runner; mkRunner; module Utils)
 
 -- Data
 
