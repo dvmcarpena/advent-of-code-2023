@@ -11,7 +11,7 @@ open import Utils.Main using (check-expected; day-runner)
 import Day01
 import Day02
 import Day03
--- import Day04
+import Day04
 -- import Day05
 -- import Day06
 -- import Day07
@@ -42,7 +42,7 @@ main = run $ do
    day-runner Day01.runner
    day-runner Day02.runner
    day-runner Day03.runner
-   -- day-runner Day04.runner
+   day-runner Day04.runner
    -- day-runner Day05.runner
   --  day-runner Day06.runner
   --  day-runner Day07.runner

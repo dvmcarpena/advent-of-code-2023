@@ -28,9 +28,11 @@ open import Text.Regex Charₚ.≤-decPoset
 
 private
   variable
-    ℓ₁ ℓ₂ : Level
+    ℓ₁ ℓ₂ ℓ₃ ℓ₄ : Level
     A : Set ℓ₁
     B : Set ℓ₂
+    C : A → Set ℓ₃
+    D : A → Set ℓ₄
 
 -- Runner
 
@@ -62,6 +64,12 @@ module Utils where
 
   duplicate : A → A × A
   duplicate a = (a , a)
+
+  diagonal-map : ∀ {a₀ a₁} → (∀ {a} → (C a) → (D a)) → (C a₀) → (C a₁) → (D a₀) × (D a₁)
+  diagonal-map f c₀ c₁ = (f c₀ , f c₁)
+
+  List⁺-sum : List⁺ ℕ → ℕ
+  List⁺-sum = List.sum ∘ List⁺.toList
 
   enumerate : List A → List (ℕ × A)
   enumerate as = rec-enumerate 0 as 
