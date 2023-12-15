@@ -65,8 +65,8 @@ module Utils where
   duplicate : A → A × A
   duplicate a = (a , a)
 
-  diagonal-map : ∀ {a₀ a₁} → (∀ {a} → (C a) → (D a)) → (C a₀) → (C a₁) → (D a₀) × (D a₁)
-  diagonal-map f c₀ c₁ = (f c₀ , f c₁)
+  diagonal-map : (A → B) → A → A → B × B
+  diagonal-map f a₀ a₁ = (f a₀ , f a₁)
 
   List⁺-sum : List⁺ ℕ → ℕ
   List⁺-sum = List.sum ∘ List⁺.toList
@@ -145,6 +145,24 @@ module Parser where
     where
       convert : List ℕ → ℕ
       convert = List.foldl (λ acc d → 10 * acc + d) 0
+  
+  generic-parser : (e : Exp) 
+    → (∀ {s} → (s ∈ e) → A) 
+    → String
+    → Maybe A
+  generic-parser {ℓ₁} {A} e to-A = Maybe.map (to-A ∘ Match.match) ∘ Maybe.decToMaybe ∘ (λ cs → search cs regex) ∘ String.toList
+    where
+      regex : Regex
+      regex = record
+        { fromStart  = true
+        ; tillEnd    = true
+        ; expression = e
+        }
+      
+      -- search-regex : (cs : List Char) → Maybe (Match (Span regex Charₚ.≤-decPoset._≡_) cs e)
+      -- search-regex = Maybe.decToMaybe ∘ (λ cs → search cs regex)
+      -- search-regex : List Char → Maybe (∀ {s} → s ∈ e)
+      -- search-regex = Maybe.map (Match.match) ∘ Maybe.decToMaybe ∘ (λ cs → search cs regex)
   
   generic-parser-by-lines : (e : Exp) 
     → (∀ {s} → (s ∈ e) → A) 

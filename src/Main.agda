@@ -13,7 +13,7 @@ import Day02
 import Day03
 import Day04
 -- import Day05
--- import Day06
+import Day06
 -- import Day07
 -- import Day08
 -- import Day09
@@ -44,7 +44,7 @@ main = run $ do
    day-runner Day03.runner
    day-runner Day04.runner
    -- day-runner Day05.runner
-  --  day-runner Day06.runner
+   day-runner Day06.runner
   --  day-runner Day07.runner
   --  day-runner Day08.runner
   --  day-runner Day09.runner
