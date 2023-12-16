@@ -45,11 +45,20 @@ parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))))) = 
 parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₁ x)))))))))) = f (inj₂ (inj₂ (inj₂ (inj₂ (inj₁ x)))))
 parse-6-cases f (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ (sum (inj₂ x)))))))))) = f (inj₂ (inj₂ (inj₂ (inj₂ (inj₂ x)))))
 
-Exp-star-map : ∀ {s e} → (∀ {t} → (t ∈ e) → A) → (s ∈ (e Regex.⋆)) → List (A)
+Exp-prod-map₁ : ∀ {s e1 e2} → (∀ {t} → (t ∈ e1) → A) → (s ∈ (e1 Regex.∙ e2)) → A
+Exp-prod-map₁ f (prod _ p _) = f p
+
+Exp-prod-map₂ : ∀ {s e1 e2} → (∀ {t} → (t ∈ e2) → A) → (s ∈ (e1 Regex.∙ e2)) → A
+Exp-prod-map₂ f (prod _ _ p) = f p
+
+Exp-prod-map : ∀ {s e1 e2} → (∀ {t} → (t ∈ e1) → A) → (∀ {u} → (u ∈ e2) → A) → (s ∈ (e1 Regex.∙ e2)) → A × A
+Exp-prod-map f g (prod _ p q) = f p , g q
+
+Exp-star-map : ∀ {s e} → (∀ {t} → (t ∈ e) → A) → (s ∈ (e Regex.⋆)) → List A
 Exp-star-map f (star (sum (inj₁ _))) = []
 Exp-star-map f (star (sum (inj₂ (prod _ p1 r)))) = (f p1) ∷ (Exp-star-map f r)
 
-Exp-star-fold : ∀ {s e} → (∀ {t} → B → (t ∈ e) → B × A) → B → (s ∈ (e Regex.⋆)) → List (A)
+Exp-star-fold : ∀ {s e} → (∀ {t} → B → (t ∈ e) → B × A) → B → (s ∈ (e Regex.⋆)) → List A
 Exp-star-fold f b (star (sum (inj₁ _))) = []
 Exp-star-fold f b (star (sum (inj₂ (prod _ p1 r)))) = (proj₂ f1) ∷ (Exp-star-fold f (proj₁ f1) r)
   where

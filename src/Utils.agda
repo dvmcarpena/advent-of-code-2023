@@ -105,7 +105,8 @@ module Utils where
 module Expression where
 
   Exp-ℕ : Exp
-  Exp-ℕ = [ '1' ─ '9' ∷ [] ] ∙ [ '0' ─ '9' ∷ [] ] ⋆
+  -- Exp-ℕ = [ '1' ─ '9' ∷ [] ] ∙ [ '0' ─ '9' ∷ [] ] ⋆
+  Exp-ℕ = [ '0' ─ '9' ∷ [] ] ∙ [ '0' ─ '9' ∷ [] ] ⋆
 
   Exp-reverse : Exp → Exp
   Exp-reverse (e1 Regex.∙ e2) = (Exp-reverse e2) Regex.∙ (Exp-reverse e1)
